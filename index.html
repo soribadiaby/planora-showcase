@@ -1,0 +1,1234 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PLANORA - Captures App Store</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Libre+Baskerville:wght@400;700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --sage: #8FAF9A;
+      --sage-deep: #6F8F7C;
+      --sage-light: #C9D3CC;
+      --ivory: #F6F5F1;
+      --sand: #E7E3DC;
+      --brown: #2F2A26;
+      --warning: #E6A756;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(135deg, var(--ivory) 0%, var(--sand) 50%, var(--sage-light) 100%);
+      min-height: 100vh;
+      padding: 40px 20px;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    header h1 {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 2.5rem;
+      color: var(--brown);
+      margin-bottom: 8px;
+    }
+
+    header p {
+      color: var(--sage-deep);
+      font-size: 1rem;
+    }
+
+    .tabs {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .tab {
+      padding: 12px 24px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .tab.active {
+      background: var(--sage);
+      color: white;
+    }
+
+    .tab:not(.active) {
+      background: white;
+      color: var(--sage-deep);
+    }
+
+    .tab:hover:not(.active) {
+      background: var(--sand);
+    }
+
+    .info {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 16px;
+      background: white;
+      border-radius: 12px;
+      color: var(--sage-deep);
+      font-size: 14px;
+    }
+
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+    }
+
+    .screenshot-card {
+      text-align: center;
+    }
+
+    .screenshot-card h3 {
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      color: var(--sage-deep);
+      margin-bottom: 12px;
+    }
+
+    .device-frame {
+      background: var(--brown);
+      border-radius: 40px;
+      padding: 12px;
+      box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+      position: relative;
+    }
+
+    .device-frame.iphone {
+      aspect-ratio: 9 / 19.5;
+    }
+
+    .device-frame.ipad {
+      aspect-ratio: 3 / 4;
+    }
+
+    .notch {
+      position: absolute;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 80px;
+      height: 24px;
+      background: var(--brown);
+      border-radius: 0 0 16px 16px;
+      z-index: 10;
+    }
+
+    .screen {
+      background: var(--ivory);
+      border-radius: 28px;
+      height: 100%;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .home-indicator {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100px;
+      height: 4px;
+      background: rgba(0,0,0,0.2);
+      border-radius: 2px;
+    }
+
+    /* Styles des ecrans */
+    .screen-content {
+      height: 100%;
+      padding: 60px 20px 40px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .screen-header {
+      margin-bottom: 20px;
+    }
+
+    .screen-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 22px;
+      color: var(--brown);
+    }
+
+    .screen-subtitle {
+      font-size: 12px;
+      color: var(--sage-deep);
+      margin-top: 4px;
+    }
+
+    .card {
+      background: white;
+      border-radius: 16px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 12px rgba(47,42,38,0.05);
+    }
+
+    .countdown-card {
+      background: var(--sage-deep);
+      color: white;
+      text-align: center;
+      padding: 24px;
+      border-radius: 20px;
+      margin-bottom: 16px;
+    }
+
+    .countdown-number {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 48px;
+    }
+
+    .countdown-label {
+      font-size: 12px;
+      opacity: 0.9;
+    }
+
+    .quick-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+
+    .quick-action {
+      background: white;
+      border-radius: 14px;
+      padding: 14px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(47,42,38,0.05);
+    }
+
+    .quick-action-icon {
+      width: 40px;
+      height: 40px;
+      background: rgba(143,175,154,0.15);
+      border-radius: 12px;
+      margin: 0 auto 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sage);
+      font-size: 18px;
+    }
+
+    .quick-action-label {
+      font-size: 13px;
+      color: var(--brown);
+      font-weight: 500;
+    }
+
+    .stat-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .stat-icon {
+      width: 28px;
+      height: 28px;
+      background: rgba(143,175,154,0.15);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--sage);
+      font-size: 12px;
+    }
+
+    .stat-label {
+      flex: 1;
+      font-size: 13px;
+      color: var(--brown);
+    }
+
+    .stat-value {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    .progress-bar {
+      height: 8px;
+      background: var(--sand);
+      border-radius: 4px;
+      overflow: hidden;
+      margin: 12px 0 8px;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--sage);
+      border-radius: 4px;
+    }
+
+    .progress-text {
+      font-size: 11px;
+      color: var(--sage-deep);
+    }
+
+    .btn-primary {
+      background: var(--sage);
+      color: white;
+      border: none;
+      padding: 14px 24px;
+      border-radius: 12px;
+      font-size: 15px;
+      font-weight: 500;
+      width: 100%;
+      margin-top: auto;
+    }
+
+    .category-badge {
+      display: inline-block;
+      padding: 4px 10px;
+      background: rgba(143,175,154,0.15);
+      color: var(--sage-deep);
+      border-radius: 6px;
+      font-size: 11px;
+      margin-bottom: 8px;
+    }
+
+    .provider-card {
+      display: flex;
+      gap: 12px;
+      padding: 12px;
+      background: white;
+      border-radius: 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 12px rgba(47,42,38,0.05);
+    }
+
+    .provider-image {
+      width: 70px;
+      height: 70px;
+      background: linear-gradient(135deg, var(--sage-light), var(--sage));
+      border-radius: 12px;
+      background-size: cover;
+      background-position: center;
+    }
+
+    .provider-info {
+      flex: 1;
+    }
+
+    .provider-name {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--brown);
+    }
+
+    .provider-category {
+      font-size: 11px;
+      color: var(--sage-deep);
+    }
+
+    .provider-rating {
+      font-size: 12px;
+      color: var(--warning);
+      margin-top: 4px;
+    }
+
+    .provider-price {
+      font-size: 11px;
+      color: var(--sage-deep);
+    }
+
+    .guest-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      background: white;
+      border-radius: 12px;
+      margin-bottom: 8px;
+    }
+
+    .guest-avatar {
+      width: 40px;
+      height: 40px;
+      background: var(--sage-light);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--sage-deep);
+    }
+
+    .guest-name {
+      flex: 1;
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--brown);
+    }
+
+    .guest-status {
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 500;
+    }
+
+    .guest-status.confirmed {
+      background: rgba(143,175,154,0.2);
+      color: var(--sage-deep);
+    }
+
+    .guest-status.pending {
+      background: rgba(230,167,86,0.2);
+      color: #B8860B;
+    }
+
+    .timeline-item {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+
+    .timeline-date {
+      width: 50px;
+      text-align: center;
+    }
+
+    .timeline-day {
+      font-size: 20px;
+      font-weight: 700;
+      color: var(--brown);
+    }
+
+    .timeline-month {
+      font-size: 10px;
+      color: var(--sage-deep);
+    }
+
+    .timeline-content {
+      flex: 1;
+      background: white;
+      padding: 12px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(47,42,38,0.05);
+    }
+
+    .timeline-title {
+      font-size: 13px;
+      font-weight: 500;
+      color: var(--brown);
+    }
+
+    .timeline-desc {
+      font-size: 11px;
+      color: var(--sage-deep);
+      margin-top: 4px;
+    }
+
+    .budget-amount {
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .budget-number {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 36px;
+      color: var(--brown);
+    }
+
+    .budget-currency {
+      font-size: 20px;
+      color: var(--sage-deep);
+      margin-left: 4px;
+    }
+
+    .search-bar {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: white;
+      padding: 12px 16px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      box-shadow: 0 4px 12px rgba(47,42,38,0.05);
+    }
+
+    .search-icon {
+      color: var(--sage-deep);
+    }
+
+    .search-input {
+      flex: 1;
+      border: none;
+      font-size: 14px;
+      color: var(--sage-deep);
+      background: transparent;
+    }
+
+    .tabs-inline {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 16px;
+      overflow-x: auto;
+    }
+
+    .tab-inline {
+      padding: 8px 14px;
+      background: white;
+      border-radius: 20px;
+      font-size: 12px;
+      color: var(--sage-deep);
+      white-space: nowrap;
+    }
+
+    .tab-inline.active {
+      background: var(--sage);
+      color: white;
+    }
+
+    .onboarding-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      padding: 40px 24px;
+      text-align: center;
+    }
+
+    .onboarding-icon {
+      width: 80px;
+      height: 80px;
+      background: var(--sand);
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 32px;
+      font-size: 36px;
+      color: var(--sage-deep);
+    }
+
+    .onboarding-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 24px;
+      color: var(--brown);
+      margin-bottom: 16px;
+    }
+
+    .onboarding-desc {
+      font-size: 14px;
+      color: var(--sage-deep);
+      line-height: 1.6;
+      max-width: 280px;
+    }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+      margin: 40px 0;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 4px;
+      background: var(--sage-light);
+    }
+
+    .dot.active {
+      width: 28px;
+      background: var(--sage-deep);
+    }
+
+    .splash-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background: var(--sage);
+    }
+
+    .splash-logo {
+      width: 80px;
+      height: 80px;
+      background: white;
+      border-radius: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 24px;
+      font-size: 32px;
+      color: var(--sage);
+    }
+
+    .splash-title {
+      font-family: 'Libre Baskerville', serif;
+      font-size: 28px;
+      color: white;
+    }
+
+    .splash-subtitle {
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      margin-top: 8px;
+    }
+
+    /* Images generees */
+    .generated-images {
+      margin-top: 60px;
+      padding-top: 40px;
+      border-top: 2px solid var(--sand);
+    }
+
+    .generated-images h2 {
+      font-family: 'Libre Baskerville', serif;
+      text-align: center;
+      color: var(--brown);
+      margin-bottom: 12px;
+    }
+
+    .generated-images p {
+      text-align: center;
+      color: var(--sage-deep);
+      font-size: 14px;
+      margin-bottom: 30px;
+    }
+
+    .images-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+    }
+
+    .image-card {
+      text-align: center;
+    }
+
+    .image-card img {
+      max-width: 100%;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+      cursor: pointer;
+    }
+
+    .image-card p {
+      margin-top: 10px;
+      font-size: 12px;
+      color: var(--sage-deep);
+    }
+
+    .loading {
+      text-align: center;
+      padding: 40px;
+      color: var(--sage-deep);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 768px) {
+      .grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>PLANORA</h1>
+      <p>Captures d'ecran App Store - Clic droit pour telecharger</p>
+    </header>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchDevice('iphone')">iPhone (1284x2778)</button>
+      <button class="tab" onclick="switchDevice('ipad')">iPad (2048x2732)</button>
+    </div>
+
+    <div class="info">
+      Les images sont generees automatiquement. Faites <strong>clic droit > Enregistrer l'image</strong> pour telecharger.
+    </div>
+
+    <!-- Ecrans sources (pour generation) -->
+    <div id="screens-source" class="hidden">
+
+      <!-- 1. Splash -->
+      <div class="device-frame iphone" data-name="01_splash" data-title="Splash Screen">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="splash-content">
+            <div class="splash-logo">P</div>
+            <div class="splash-title">PLANORA</div>
+            <div class="splash-subtitle">Bride & Co</div>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 2. Onboarding -->
+      <div class="device-frame iphone" data-name="02_onboarding" data-title="Onboarding">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="onboarding-content">
+            <div class="onboarding-icon">📅</div>
+            <div class="onboarding-title">Organisez sereinement</div>
+            <div class="onboarding-desc">Gerez tous les aspects de votre evenement depuis un seul endroit. Tout est clair.</div>
+            <div class="dots">
+              <div class="dot active"></div>
+              <div class="dot"></div>
+              <div class="dot"></div>
+            </div>
+            <button class="btn-primary">Continuer</button>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 3. Dashboard -->
+      <div class="device-frame iphone" data-name="03_dashboard" data-title="Dashboard">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <div class="screen-header">
+              <div class="screen-title">Mariage Sophie & Thomas</div>
+              <div class="screen-subtitle">15 septembre 2025</div>
+            </div>
+            <div class="countdown-card">
+              <div class="countdown-label">Encore</div>
+              <div class="countdown-number">245</div>
+              <div class="countdown-label">jours</div>
+            </div>
+            <div class="quick-actions">
+              <div class="quick-action">
+                <div class="quick-action-icon">🔍</div>
+                <div class="quick-action-label">Prestataires</div>
+              </div>
+              <div class="quick-action">
+                <div class="quick-action-icon">💰</div>
+                <div class="quick-action-label">Budget</div>
+              </div>
+              <div class="quick-action">
+                <div class="quick-action-icon">👥</div>
+                <div class="quick-action-label">Invites</div>
+              </div>
+              <div class="quick-action">
+                <div class="quick-action-icon">📅</div>
+                <div class="quick-action-label">Timeline</div>
+              </div>
+            </div>
+            <div class="card">
+              <div style="font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 12px;">Statut global</div>
+              <div class="stat-row">
+                <div class="stat-icon">✓</div>
+                <div class="stat-label">Prestataires confirmes</div>
+                <div class="stat-value">3/8</div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">Invites confirmes</div>
+                <div class="stat-value">45/100</div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-icon">💰</div>
+                <div class="stat-label">Budget consomme</div>
+                <div class="stat-value">12 500 EUR</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 50%"></div></div>
+              <div class="progress-text">12 500 EUR sur 25 000 EUR</div>
+            </div>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 4. Search -->
+      <div class="device-frame iphone" data-name="04_recherche" data-title="Recherche Prestataires">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <div class="screen-header">
+              <div class="screen-title">Prestataires</div>
+              <div class="screen-subtitle">Trouvez les meilleurs</div>
+            </div>
+            <div class="search-bar">
+              <span class="search-icon">🔍</span>
+              <span class="search-input">Rechercher...</span>
+            </div>
+            <div class="tabs-inline">
+              <div class="tab-inline active">Tous</div>
+              <div class="tab-inline">Lieux</div>
+              <div class="tab-inline">Traiteurs</div>
+              <div class="tab-inline">Photo</div>
+            </div>
+            <div class="provider-card">
+              <div class="provider-image" style="background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=200&h=200&fit=crop')"></div>
+              <div class="provider-info">
+                <div class="provider-name">Chateau de Versailles</div>
+                <div class="provider-category">Lieu de reception</div>
+                <div class="provider-rating">★★★★★ 4.9 (127)</div>
+                <div class="provider-price">€€€€ • Versailles</div>
+              </div>
+            </div>
+            <div class="provider-card">
+              <div class="provider-image" style="background-image: url('https://images.unsplash.com/photo-1464366400600-7168b8af9bc3?w=200&h=200&fit=crop')"></div>
+              <div class="provider-info">
+                <div class="provider-name">Domaine de Chantilly</div>
+                <div class="provider-category">Lieu de reception</div>
+                <div class="provider-rating">★★★★★ 4.8 (98)</div>
+                <div class="provider-price">€€€€ • Chantilly</div>
+              </div>
+            </div>
+            <div class="provider-card">
+              <div class="provider-image" style="background-image: url('https://images.unsplash.com/photo-1555244162-803834f70033?w=200&h=200&fit=crop')"></div>
+              <div class="provider-info">
+                <div class="provider-name">La Table du Chef</div>
+                <div class="provider-category">Traiteur</div>
+                <div class="provider-rating">★★★★★ 4.7 (84)</div>
+                <div class="provider-price">€€€ • Paris</div>
+              </div>
+            </div>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 5. Budget -->
+      <div class="device-frame iphone" data-name="05_budget" data-title="Budget">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <div class="screen-header">
+              <div class="screen-title">Budget</div>
+              <div class="screen-subtitle">Vous savez ou vous en etes</div>
+            </div>
+            <div class="card">
+              <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                <div class="stat-icon">💰</div>
+                <span style="font-size: 14px; color: var(--brown);">Budget total</span>
+              </div>
+              <div class="budget-amount">
+                <span class="budget-number">25 000</span>
+                <span class="budget-currency">EUR</span>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 68%"></div></div>
+              <div style="display: flex; justify-content: space-between;">
+                <span class="progress-text">68% utilise</span>
+                <span class="progress-text">8 000 EUR disponible</span>
+              </div>
+            </div>
+            <div class="card">
+              <div class="stat-row">
+                <div class="stat-icon">🏰</div>
+                <div class="stat-label">Lieu</div>
+                <div class="stat-value">8 000 EUR</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 80%"></div></div>
+            </div>
+            <div class="card">
+              <div class="stat-row">
+                <div class="stat-icon">🍽️</div>
+                <div class="stat-label">Traiteur</div>
+                <div class="stat-value">4 500 EUR</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 75%"></div></div>
+            </div>
+            <div class="card">
+              <div class="stat-row">
+                <div class="stat-icon">📸</div>
+                <div class="stat-label">Photo/Video</div>
+                <div class="stat-value">2 800 EUR</div>
+              </div>
+              <div class="progress-bar"><div class="progress-fill" style="width: 93%"></div></div>
+            </div>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 6. RSVP -->
+      <div class="device-frame iphone" data-name="06_invites" data-title="Gestion Invites">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <div class="screen-header">
+              <div class="screen-title">Invites</div>
+              <div class="screen-subtitle">RSVP & gestion</div>
+            </div>
+            <div class="card" style="display: flex; justify-content: space-around; text-align: center;">
+              <div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--sage);">45</div>
+                <div style="font-size: 11px; color: var(--sage-deep);">Confirmes</div>
+              </div>
+              <div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--warning);">23</div>
+                <div style="font-size: 11px; color: var(--sage-deep);">En attente</div>
+              </div>
+              <div>
+                <div style="font-size: 24px; font-weight: 700; color: var(--brown);">100</div>
+                <div style="font-size: 11px; color: var(--sage-deep);">Total</div>
+              </div>
+            </div>
+            <div class="search-bar">
+              <span class="search-icon">🔍</span>
+              <span class="search-input">Rechercher un invite...</span>
+            </div>
+            <div class="guest-row">
+              <div class="guest-avatar">FD</div>
+              <div class="guest-name">Famille Dupont</div>
+              <div class="guest-status confirmed">Confirme</div>
+            </div>
+            <div class="guest-row">
+              <div class="guest-avatar">ML</div>
+              <div class="guest-name">Marie Laurent</div>
+              <div class="guest-status confirmed">Confirme</div>
+            </div>
+            <div class="guest-row">
+              <div class="guest-avatar">PB</div>
+              <div class="guest-name">Pierre Bernard</div>
+              <div class="guest-status pending">En attente</div>
+            </div>
+            <div class="guest-row">
+              <div class="guest-avatar">JM</div>
+              <div class="guest-name">Julie Martin</div>
+              <div class="guest-status pending">En attente</div>
+            </div>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 7. Timeline -->
+      <div class="device-frame iphone" data-name="07_timeline" data-title="Timeline">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <div class="screen-header">
+              <div class="screen-title">Timeline</div>
+              <div class="screen-subtitle">Votre planning</div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">
+                <div class="timeline-day">15</div>
+                <div class="timeline-month">JAN</div>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">Reserver le photographe</div>
+                <div class="timeline-desc">Confirmer le devis avec Studio Photo</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">
+                <div class="timeline-day">20</div>
+                <div class="timeline-month">JAN</div>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">Degustation traiteur</div>
+                <div class="timeline-desc">RDV a 14h chez La Table du Chef</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">
+                <div class="timeline-day">01</div>
+                <div class="timeline-month">FEV</div>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">Envoyer les faire-part</div>
+                <div class="timeline-desc">100 invitations a envoyer</div>
+              </div>
+            </div>
+            <div class="timeline-item">
+              <div class="timeline-date">
+                <div class="timeline-day">15</div>
+                <div class="timeline-month">FEV</div>
+              </div>
+              <div class="timeline-content">
+                <div class="timeline-title">Essayage robe</div>
+                <div class="timeline-desc">Premier essayage chez la couturiere</div>
+              </div>
+            </div>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 8. Wishlist -->
+      <div class="device-frame iphone" data-name="08_favoris" data-title="Favoris & Devis">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <div class="screen-header">
+              <div class="screen-title">Favoris & Devis</div>
+              <div class="screen-subtitle">Vos prestataires selectionnes</div>
+            </div>
+            <div class="tabs-inline">
+              <div class="tab-inline active">Favoris (5)</div>
+              <div class="tab-inline">Devis (3)</div>
+              <div class="tab-inline">Confirmes (2)</div>
+            </div>
+            <div class="provider-card">
+              <div class="provider-image" style="background-image: url('https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=200&h=200&fit=crop')"></div>
+              <div class="provider-info">
+                <div class="provider-name">Chateau de Versailles</div>
+                <div class="provider-category">Lieu de reception</div>
+                <div style="margin-top: 8px;">
+                  <span class="category-badge">Devis recu</span>
+                </div>
+              </div>
+            </div>
+            <div class="provider-card">
+              <div class="provider-image" style="background-image: url('https://images.unsplash.com/photo-1542038784456-1ea8e935640e?w=200&h=200&fit=crop')"></div>
+              <div class="provider-info">
+                <div class="provider-name">Studio Photo Elite</div>
+                <div class="provider-category">Photographe</div>
+                <div style="margin-top: 8px;">
+                  <span class="category-badge" style="background: rgba(143,175,154,0.3);">Confirme</span>
+                </div>
+              </div>
+            </div>
+            <div class="provider-card">
+              <div class="provider-image" style="background-image: url('https://images.unsplash.com/photo-1555244162-803834f70033?w=200&h=200&fit=crop')"></div>
+              <div class="provider-info">
+                <div class="provider-name">La Table du Chef</div>
+                <div class="provider-category">Traiteur</div>
+                <div style="margin-top: 8px;">
+                  <span class="category-badge" style="background: rgba(230,167,86,0.2); color: #B8860B;">En attente</span>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 9. Quote Detail -->
+      <div class="device-frame iphone" data-name="09_devis" data-title="Detail Devis">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <div class="screen-header">
+              <div class="screen-title">Devis</div>
+              <div class="screen-subtitle">Chateau de Versailles</div>
+            </div>
+            <div class="card">
+              <div style="text-align: center; margin-bottom: 16px;">
+                <div style="font-size: 12px; color: var(--sage-deep);">Montant total</div>
+                <div class="budget-amount" style="margin: 8px 0;">
+                  <span class="budget-number">8 500</span>
+                  <span class="budget-currency">EUR</span>
+                </div>
+                <span class="category-badge">Valide jusqu'au 30 Jan</span>
+              </div>
+            </div>
+            <div class="card">
+              <div style="font-size: 14px; font-weight: 600; color: var(--brown); margin-bottom: 12px;">Details</div>
+              <div class="stat-row">
+                <div class="stat-label">Location salle</div>
+                <div class="stat-value">5 000 EUR</div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-label">Coordinateur</div>
+                <div class="stat-value">1 500 EUR</div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-label">Decoration florale</div>
+                <div class="stat-value">1 200 EUR</div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-label">Hebergement</div>
+                <div class="stat-value">800 EUR</div>
+              </div>
+            </div>
+            <button class="btn-primary">Accepter le devis</button>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- 10. Settings -->
+      <div class="device-frame iphone" data-name="10_parametres" data-title="Parametres">
+        <div class="notch"></div>
+        <div class="screen">
+          <div class="screen-content">
+            <div class="screen-header">
+              <div class="screen-title">Parametres</div>
+              <div class="screen-subtitle">Gerez votre evenement</div>
+            </div>
+            <div class="card">
+              <div class="stat-row">
+                <div class="stat-icon">📅</div>
+                <div class="stat-label">Mariage Sophie & Thomas</div>
+                <div style="color: var(--sage);">›</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="stat-row">
+                <div class="stat-icon">👥</div>
+                <div class="stat-label">Collaborateurs</div>
+                <div style="color: var(--sage-deep); font-size: 12px;">3 personnes</div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-icon">🔔</div>
+                <div class="stat-label">Notifications</div>
+                <div style="color: var(--sage);">›</div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-icon">🎨</div>
+                <div class="stat-label">Apparence</div>
+                <div style="color: var(--sage);">›</div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="stat-row">
+                <div class="stat-icon">❓</div>
+                <div class="stat-label">Aide & Support</div>
+                <div style="color: var(--sage);">›</div>
+              </div>
+              <div class="stat-row">
+                <div class="stat-icon">📄</div>
+                <div class="stat-label">Conditions d'utilisation</div>
+                <div style="color: var(--sage);">›</div>
+              </div>
+            </div>
+          </div>
+          <div class="home-indicator"></div>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Images generees (telechargeables) -->
+    <div class="generated-images">
+      <h2>Captures telechargeables</h2>
+      <p>Clic droit sur une image > "Enregistrer l'image sous..."</p>
+      <div id="loading" class="loading">Generation des images en cours...</div>
+      <div id="images-grid" class="images-grid"></div>
+    </div>
+
+  </div>
+
+  <script>
+    let currentDevice = 'iphone';
+    const DIMENSIONS = {
+      iphone: { width: 1284, height: 2778 },
+      ipad: { width: 2048, height: 2732 }
+    };
+
+    function switchDevice(device) {
+      currentDevice = device;
+      document.querySelectorAll('.tab').forEach(tab => {
+        tab.classList.toggle('active', tab.textContent.toLowerCase().includes(device));
+      });
+      generateImages();
+    }
+
+    async function generateImages() {
+      const container = document.getElementById('images-grid');
+      const loading = document.getElementById('loading');
+      const source = document.getElementById('screens-source');
+
+      container.innerHTML = '';
+      loading.style.display = 'block';
+
+      const frames = source.querySelectorAll('.device-frame');
+      const dims = DIMENSIONS[currentDevice];
+
+      for (const frame of frames) {
+        const name = frame.dataset.name;
+        const title = frame.dataset.title;
+
+        // Clone et ajuster pour le type de device
+        const clone = frame.cloneNode(true);
+        clone.className = `device-frame ${currentDevice}`;
+        clone.style.width = currentDevice === 'iphone' ? '375px' : '600px';
+        clone.style.position = 'absolute';
+        clone.style.left = '-9999px';
+        document.body.appendChild(clone);
+
+        try {
+          const canvas = await html2canvas(clone, {
+            scale: 3,
+            useCORS: true,
+            backgroundColor: '#F6F5F1',
+            width: clone.offsetWidth,
+            height: clone.offsetHeight
+          });
+
+          // Redimensionner aux dimensions App Store
+          const finalCanvas = document.createElement('canvas');
+          finalCanvas.width = dims.width;
+          finalCanvas.height = dims.height;
+          const ctx = finalCanvas.getContext('2d');
+
+          ctx.fillStyle = '#F6F5F1';
+          ctx.fillRect(0, 0, dims.width, dims.height);
+
+          // Calculer le scale pour remplir
+          const scale = Math.min(
+            dims.width / canvas.width,
+            dims.height / canvas.height
+          ) * 0.9;
+
+          const scaledWidth = canvas.width * scale;
+          const scaledHeight = canvas.height * scale;
+          const x = (dims.width - scaledWidth) / 2;
+          const y = (dims.height - scaledHeight) / 2;
+
+          ctx.drawImage(canvas, x, y, scaledWidth, scaledHeight);
+
+          // Creer l'image
+          const img = document.createElement('img');
+          img.src = finalCanvas.toDataURL('image/png', 1.0);
+          img.alt = title;
+          img.title = `${name}.png - Clic droit pour telecharger`;
+
+          const card = document.createElement('div');
+          card.className = 'image-card';
+          card.innerHTML = `<p>${title}<br><small>${dims.width}x${dims.height}px</small></p>`;
+          card.insertBefore(img, card.firstChild);
+
+          container.appendChild(card);
+
+        } catch (err) {
+          console.error('Erreur:', err);
+        }
+
+        document.body.removeChild(clone);
+      }
+
+      loading.style.display = 'none';
+    }
+
+    // Generer au chargement
+    window.addEventListener('load', () => {
+      setTimeout(generateImages, 500);
+    });
+  </script>
+</body>
+</html>
